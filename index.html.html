@@ -37,37 +37,37 @@
   </header>
 
   <section class="hero">
-    <h2 id="hero-title">Automate Conversations. Ignite Growth.</h2>
-    <p id="hero-sub">Empower your business with AI-driven chatbots that sell, support, and scale — 24/7.</p>
-    <a href="#contact" class="btn" id="hero-btn">⚡ Get a Free Demo</a>
+    <h2>Automate Conversations. Ignite Growth.</h2>
+    <p>Empower your business with AI-driven chatbots that sell, support, and scale — 24/7.</p>
+    <a href="#contact" class="btn">⚡ Get a Free Demo</a>
   </section>
 
   <section class="section" id="services">
-    <h3 id="services-title">Our Services</h3>
+    <h3>Our Services</h3>
     <div class="cards">
       <div class="card">
         <h4>🤖 Web Chatbot</h4>
-        <p id="svc1">Lead-generating bot embedded on your website.</p>
+        <p>Lead-generating bot embedded on your website.</p>
       </div>
       <div class="card">
         <h4>💬 WhatsApp Automation</h4>
-        <p id="svc2">Automated flows for client engagement via WhatsApp.</p>
+        <p>Automated flows for client engagement via WhatsApp.</p>
       </div>
       <div class="card">
         <h4>🔗 CRM Integration</h4>
-        <p id="svc3">Sync chat leads with HubSpot, Pipedrive or Google Sheets.</p>
+        <p>Sync chat leads with HubSpot, Pipedrive or Google Sheets.</p>
       </div>
     </div>
   </section>
 
   <section class="section" id="demos">
-    <h3 id="demos-title">Interactive Demos</h3>
-    <p id="demo-sub">See our services in action before you buy.</p>
+    <h3>Interactive Demos</h3>
+    <p>See our services in action before you buy.</p>
     <p>👉 Coming soon with real-time previews.</p>
   </section>
 
   <section class="section" id="pricing">
-    <h3 id="pricing-title">Plans & Pricing</h3>
+    <h3>Plans & Pricing</h3>
     <div class="cards">
       <div class="card">
         <h4>💎 Starter</h4>
@@ -85,78 +85,79 @@
   </section>
 
   <section class="section" id="contact">
-    <h3 id="contact-title">Let’s Automate Your Business</h3>
+    <h3>Let’s Automate Your Business</h3>
     <p>📧 <a href="mailto:hello@flowspark.ai">hello@flowspark.ai</a></p>
   </section>
 
   <footer>
     <p>© 2025 Flowspark. All rights reserved.</p>
   </footer>
-<!-- === Chatbase: widget oficial === -->
-<script>
-(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
-</script>
-<!-- === /Chatbase oficial === -->
 
+  <!-- === Flowspark Chatbase + Client Action Integration === -->
+  <script>
+  (function(){
+    const BOT_ID = "QPdQhcFv6iJ_-FDsTmsXh"; // tu ID Chatbase
+    const MAKE_WEBHOOK = "https://hook.us2.make.com/m9iakcd9s1f4ay8h5pyucqp7259lun5m";
 
-<!-- === Flowspark: Extensión de integraciones (Make, persistencia, etc.) === -->
-<script>
-(function () {
-  var MAKE_WEBHOOK = "https://hook.us2.make.com/m9iakcd9s1f4ay8h5pyucqp7259lun5m";
-  var OPEN_KEY = "fs_cb_open";
+    // --- Insertar widget de Chatbase ---
+    if(!window.chatbase||window.chatbase("getState")!=="initialized"){
+      window.chatbase=(...args)=>{(window.chatbase.q||(window.chatbase.q=[])).push(args)};
+      window.chatbase=new Proxy(window.chatbase,{get:(t,p)=>p==="q"?t.q:(...a)=>t(p,...a)});
+    }
+    const loadScript=()=>{const s=document.createElement("script");
+      s.src="https://www.chatbase.co/embed.min.js";
+      s.id=BOT_ID;s.domain="www.chatbase.co";
+      document.body.appendChild(s)};
+    document.readyState==="complete"?loadScript():window.addEventListener("load",loadScript);
 
-  function sanitize(v){ return String(v == null ? "" : v).trim().slice(0,2000); }
-  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||"").trim()); }
-  function dedupe(email, message){
-    try{
-      var key="fs_lead_"+(email||"").toLowerCase()+"_"+(message||"").slice(0,40);
-      var raw=localStorage.getItem(key); var now=Date.now(); var ttl=2*60*60*1000;
-      if(raw){var t=JSON.parse(raw).t;if(now-t<ttl)return true;}
-      localStorage.setItem(key,JSON.stringify({t:now}));
-    }catch(e){}
-    return false;
-  }
+    // --- Enviar datos a Make ---
+    async function sendToMake(payload){
+      try{
+        const res = await fetch(MAKE_WEBHOOK,{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(payload),
+          keepalive:true
+        });
+        console.log("[Flowspark] Lead enviado a Make ✅", res.status);
+        return res.ok;
+      }catch(e){
+        console.error("[Flowspark] Error enviando lead ❌", e);
+        return false;
+      }
+    }
 
-  async function sendLead(payload){
-    try{
-      const res = await fetch(MAKE_WEBHOOK,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(payload),
-        keepalive:true
-      });
-      if(res.ok) console.log("[Flowspark] Lead enviado a Make ✅");
-      else console.error("[Flowspark] Error enviando lead ❌");
-    }catch(e){console.error("[Flowspark]",e);}
-  }
+    // --- Escuchar acción Client-side de Chatbase ---
+    window.addEventListener("message", async (event)=>{
+      const data = event.data || {};
+      if(data.type==="client-action" && data.name==="Enviar Lead A Make"){
+        const inputs=data.inputs||{};
+        const payload={
+          name:inputs.name||"",
+          email:inputs.email||"",
+          message:inputs.message||"",
+          date:new Date().toISOString(),
+          source:"Chatbase Client-side"
+        };
+        console.log("[Flowspark] Acción client-side detectada:", payload);
+        await sendToMake(payload);
 
-  // Escuchar leads enviados desde el agente
-  window.addEventListener("message",function(event){
-    try{
-      var data=event.data||{};
-      if(data.type!=="CHATBASE_LEAD") return;
-      var p=data.payload||{};
-      var name=p.name||"", email=p.email||"", msg=p.message||"";
-      if(!isEmail(email)||dedupe(email,msg))return;
-      sendLead({name,email,message:msg,page:location.href,date:new Date().toISOString()});
-    }catch(err){console.error("[Flowspark] postMessage error:",err);}
-  });
+        // Responder al bot para continuar el flujo
+        window.chatbase("sendClientActionResponse", data.id, {
+          ok:true,
+          message:"Lead enviado correctamente ✅"
+        });
+        return;
+      }
 
-  // Recordar si el bubble quedó abierto
-  window.chatbase("on","ready",function(){
-    var wasOpen = localStorage.getItem(OPEN_KEY)==="1";
-    if(wasOpen) window.chatbase("open"); else window.chatbase("close");
-    window.chatbase("on","opened",()=>localStorage.setItem(OPEN_KEY,"1"));
-    window.chatbase("on","closed",()=>localStorage.setItem(OPEN_KEY,"0"));
-  });
-})();
-</script>
-<!-- === /Flowspark extension === -->
+      // --- Compatibilidad con CHATBASE_LEAD (antiguo) ---
+      if(data.type==="CHATBASE_LEAD"){
+        await sendToMake(data.payload);
+      }
+    });
+  })();
+  </script>
+  <!-- === /Flowspark Chatbase + Make === -->
 
-  
 </body>
 </html>
-
-
-
-
