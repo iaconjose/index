@@ -149,37 +149,8 @@
     });
   })();
   </script>
-  <script>
-(function () {
-  const MAKE_WEBHOOK = "https://hook.us2.make.com/XXXXXXXX"; // tu URL
-
-  async function sendToMake(payload) {
-    const res = await fetch(MAKE_WEBHOOK, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload), keepalive: true
-    });
-    console.log("[Flowspark] → Make:", res.status, payload);
-    return res.ok;
-  }
-
-  window.FlowsparkLead = {
-    test() {
-      return sendToMake({
-        name: "Prueba desde consola",
-        email: "demo@flowspark.ai",
-        message: "Test manual",
-        source: "Console",
-        date: new Date().toISOString(),
-        page_url: location.href,
-        referrer: document.referrer || ""
-      });
-    }
-  };
-})();
-</script>
-
 </body>
 </html>
+
 
 
