@@ -29,10 +29,10 @@
   <header>
     <h1>Flowspark</h1>
     <nav>
-      <a href="#services" id="nav-services">Services</a>
-      <a href="#demos" id="nav-demos">Demos</a>
-      <a href="#pricing" id="nav-pricing">Pricing</a>
-      <a href="#contact" class="btn" id="nav-cta">Get a Demo</a>
+      <a href="#services">Services</a>
+      <a href="#demos">Demos</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact" class="btn">Get a Demo</a>
     </nav>
   </header>
 
@@ -92,25 +92,15 @@
   <footer>
     <p>© 2025 Flowspark. All rights reserved.</p>
   </footer>
+<script>
+(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+</script>
 
-  <!-- === Flowspark Chatbase + Client Action Integration === -->
+  <!-- === ⚙️ BLOQUE 2: Integración Flowspark + Make (client-side) === -->
   <script>
   (function(){
-    const BOT_ID = "QPdQhcFv6iJ_-FDsTmsXh"; // tu ID Chatbase
     const MAKE_WEBHOOK = "https://hook.us2.make.com/m9iakcd9s1f4ay8h5pyucqp7259lun5m";
 
-    // --- Insertar widget de Chatbase ---
-    if(!window.chatbase||window.chatbase("getState")!=="initialized"){
-      window.chatbase=(...args)=>{(window.chatbase.q||(window.chatbase.q=[])).push(args)};
-      window.chatbase=new Proxy(window.chatbase,{get:(t,p)=>p==="q"?t.q:(...a)=>t(p,...a)});
-    }
-    const loadScript=()=>{const s=document.createElement("script");
-      s.src="https://www.chatbase.co/embed.min.js";
-      s.id=BOT_ID;s.domain="www.chatbase.co";
-      document.body.appendChild(s)};
-    document.readyState==="complete"?loadScript():window.addEventListener("load",loadScript);
-
-    // --- Enviar datos a Make ---
     async function sendToMake(payload){
       try{
         const res = await fetch(MAKE_WEBHOOK,{
@@ -127,9 +117,10 @@
       }
     }
 
-    // --- Escuchar acción Client-side de Chatbase ---
     window.addEventListener("message", async (event)=>{
       const data = event.data || {};
+
+      // Escucha acción Client-side del bot
       if(data.type==="client-action" && data.name==="Enviar Lead A Make"){
         const inputs=data.inputs||{};
         const payload={
@@ -142,7 +133,7 @@
         console.log("[Flowspark] Acción client-side detectada:", payload);
         await sendToMake(payload);
 
-        // Responder al bot para continuar el flujo
+        // Responde al bot para continuar
         window.chatbase("sendClientActionResponse", data.id, {
           ok:true,
           message:"Lead enviado correctamente ✅"
@@ -150,14 +141,12 @@
         return;
       }
 
-      // --- Compatibilidad con CHATBASE_LEAD (antiguo) ---
+      // Compatibilidad con versiones antiguas
       if(data.type==="CHATBASE_LEAD"){
         await sendToMake(data.payload);
       }
     });
   })();
   </script>
-  <!-- === /Flowspark Chatbase + Make === -->
-
 </body>
 </html>
