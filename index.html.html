@@ -93,62 +93,145 @@
     <p>© 2025 Flowspark. All rights reserved.</p>
   </footer>
 
-  <!-- === Flowspark: Carga segura del widget de Chatbase (Action envía a Make) === -->
-  <script>
-  (function () {
-    // ⚙️ Reemplazar sólo si cambias de agente en Chatbase
-    var BOT_ID      = "QPdQhcFv6iJ_-FDsTmsXh";
-    var SCRIPT_SRC  = "https://www.chatbase.co/embed.min.js";
-    var OPEN_KEY    = "fs_cb_open";            // recuerda estado abierto/cerrado
-    var LOADED_FLAG = "__flowspark_cb_loaded"; // evita doble inyección
+  <!-- === Flowspark: Chatbase widget + lead → Make (safe embed) === -->
+<script>
+(function () {
+  // ====== CONFIG ======
+  var BOT_ID       = "QPdQhcFv6iJ_-FDsTmsXh"; // ID de tu agente (Deploy → Chat widget)
+  var EMBED_SRC    = "https://www.chatbase.co/embed.min.js";
+  var MAKE_WEBHOOK = "https://hook.us2.make.com/m9iakcd9s1f4ay8h5pyucqp7259lun5m"; // tu webhook Make
+  var OPEN_KEY     = "fs_cb_open";
+  var LOADED_FLAG  = "__flowspark_cb_loaded";
 
-    // Evitar cargas duplicadas (SPA / recargas parciales)
-    if (window[LOADED_FLAG]) return;
-    window[LOADED_FLAG] = true;
-
-    // Stub de chatbase para enganchar eventos antes de que cargue
-    if (!window.chatbase || window.chatbase("getState") !== "initialized") {
-      window.chatbase = (...args) => {
-        (window.chatbase.q || (window.chatbase.q = [])).push(args);
-      };
-      window.chatbase = new Proxy(window.chatbase, {
-        get(target, prop) { if (prop === "q") return target.q; return (...a) => target(prop, ...a); }
-      });
-    }
-
-    // Recordar si el widget estaba abierto
+  // ====== Utilidades ======
+  function sanitize(v){ return String(v == null ? "" : v).trim().slice(0,2000); }
+  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||"").trim()); }
+  function getUTMs(url){
     try {
-      var wasOpen = localStorage.getItem(OPEN_KEY) === "1";
-      window.chatbase("on", "ready", function () {
-        if (wasOpen) window.chatbase("open"); else window.chatbase("close");
-        window.chatbase("on", "opened", () => localStorage.setItem(OPEN_KEY, "1"));
-        window.chatbase("on", "closed", () => localStorage.setItem(OPEN_KEY, "0"));
-      });
-    } catch (e) {}
-
-    function inject() {
-      // No volver a inyectar si ya existe un script con el mismo id
-      if (document.getElementById(BOT_ID)) return;
-      var s = document.createElement("script");
-      s.src = SCRIPT_SRC;
-      s.id = BOT_ID;
-      // algunos widgets usan data-cbot para identificar el bot
-      s.setAttribute("data-cbot", BOT_ID);
-      s.async = true;
-      s.defer = true;
-      document.head.appendChild(s);
+      var u = new URL(url || window.location.href);
+      var k = ["utm_source","utm_medium","utm_campaign","utm_term","utm_content"];
+      var o = {}; k.forEach(kk => o[kk] = u.searchParams.get(kk) || ""); return o;
+    } catch(e){ return {}; }
+  }
+  function dedupe(email, message){
+    try {
+      var key = "fs_lead_"+(email||"").toLowerCase()+"_"+(message||"").slice(0,40);
+      var raw = localStorage.getItem(key);
+      var now = Date.now(), ttl = 2*60*60*1000; // 2h
+      if (raw) { var t = JSON.parse(raw).t; if (now - t < ttl) return true; }
+      localStorage.setItem(key, JSON.stringify({t: now}));
+    } catch(e){}
+    return false;
+  }
+  async function sendLead(payload){
+    // Reintentos simples
+    for (let i=0;i<3;i++){
+      try{
+        var res = await fetch(MAKE_WEBHOOK,{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+        if (res.ok) return true;
+      }catch(e){}
+      await new Promise(r=>setTimeout(r, 600*(i+1)));
     }
+    return false;
+  }
+  async function captureLead({ name, email, message, extra }){
+    var n = sanitize(name), e = sanitize(email), m = sanitize(message);
+    if (!isEmail(e)) { console.warn("[Flowspark] Email inválido:", e); return false; }
+    if (dedupe(e,m)) { console.info("[Flowspark] Lead duplicado (bloq 2h)."); return false; }
 
-    if (document.readyState === "complete") inject();
-    else window.addEventListener("load", inject);
+    var utm = getUTMs();
+    var payload = {
+      name: n,
+      email: e,
+      message: m || "Lead desde chatbot Chatbase",
+      source: "Chatbase - Web",
+      page_url: window.location.href,
+      referrer: document.referrer || "",
+      date: new Date().toISOString(),
+      ...utm,
+      ...(extra || {})
+    };
 
-    // 🔎 Importante:
-    // Ya no enviamos leads desde la web. La ACTION de Chatbase (habilitada para Widget)
-    // es quien llama al Webhook de Make con name/email/message.
-    // Esto evita duplicados y mantiene toda la lógica en Chatbase + Make.
-  })();
-  </script>
-  <!-- === /Flowspark Chatbase widget === -->
+    var ok = await sendLead(payload);
+    if (ok) console.log("[Flowspark] Lead enviado a Make ✅", payload);
+    else   console.error("[Flowspark] No fue posible enviar el lead ❌", payload);
+    return ok;
+  }
+
+  // ====== Evitar doble carga del widget ======
+  if (window[LOADED_FLAG]) return;
+  window[LOADED_FLAG] = true;
+
+  // Stub de chatbase antes de cargar el script real
+  if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+    window.chatbase = (...args) => {
+      (window.chatbase.q || (window.chatbase.q = [])).push(args);
+    };
+    window.chatbase = new Proxy(window.chatbase, {
+      get(target, prop){ if (prop === "q") return target.q; return (...a)=>target(prop, ...a); }
+    });
+  }
+
+  // Persistir si el bubble quedó abierto/cerrado
+  try{
+    var wasOpen = localStorage.getItem(OPEN_KEY) === "1";
+    window.chatbase("on","ready",function(){
+      if (wasOpen) window.chatbase("open"); else window.chatbase("close");
+      window.chatbase("on","opened",()=>localStorage.setItem(OPEN_KEY,"1"));
+      window.chatbase("on","closed",()=>localStorage.setItem(OPEN_KEY,"0"));
+    });
+  }catch(e){}
+
+  // Inyectar el widget oficial (forma segura)
+  function inject(){
+    if (document.getElementById(BOT_ID)) return; // no duplicar
+    var s = document.createElement("script");
+    s.src = EMBED_SRC;
+    s.id = BOT_ID;
+    s.async = true;
+    // Chatbase usa el id del script como identificador del bot
+    // (no hace falta data-atributes mientras el id coincida)
+    document.body.appendChild(s);
+  }
+  if (document.readyState === "complete") inject();
+  else window.addEventListener("load", inject);
+
+  // ====== Recibir leads desde Chatbase (acciones personalizadas) ======
+  // En tu acción del agente, usa:
+  // window.postMessage({ type: 'CHATBASE_LEAD', payload: { name, email, message } }, '*')
+  window.addEventListener("message", function (event) {
+    try {
+      var data = event.data || {};
+      if (data.type !== "CHATBASE_LEAD" && data.type !== "lead_captured") return;
+      var p = data.payload || {};
+      var name    = p.name || p.full_name || "";
+      var email   = p.email || p.mail || "";
+      var message = p.message || p.intent || p.reason || "";
+      captureLead({ name, email, message, extra: { raw: p } });
+    } catch (err) {
+      console.error("[Flowspark] Error procesando postMessage:", err);
+    }
+  });
+
+  // ====== Test manual desde consola ======
+  window.FlowsparkLead = {
+    test(){ return captureLead({
+      name:"Prueba desde consola",
+      email:"demo@flowspark.ai",
+      message:"Test manual window.FlowsparkLead.test()",
+      extra:{ test:true }
+    });}
+  };
+})();
+</script>
+<!-- === /Flowspark Chatbase widget + lead === -->
+
 </body>
 </html>
+
 
