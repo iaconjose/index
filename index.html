@@ -97,6 +97,69 @@
 <script>
 (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
 </script>
+  
+<script>
+/* ==== Flowspark: persistir estado (abrir/cerrar) del widget Chatbase ==== */
+
+(function () {
+  const LOG_PREFIX = "[Chatbase Persist]";
+  const OPEN_KEY   = "fs_cb_open";       // localStorage key
+  const READY_TIMEOUT_MS = 8000;         // seguridad: si no llega "ready"
+
+  // 1) Stub defensivo si el snippet aún no inicializa
+  if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+    const q = [];
+    const stub = (...args) => q.push(args);
+    stub.q = q;
+    window.chatbase = new Proxy(stub, {
+      get(target, prop) { return prop === "q" ? target.q : (...a) => target(prop, ...a); }
+    });
+  }
+
+  // 2) Espera a que el widget dispare "ready", con timeout
+  function whenChatbaseReady(cb) {
+    const start = Date.now();
+    function tryHook() {
+      try {
+        if (typeof window.chatbase === "function") {
+          try { window.chatbase("on", "ready", cb); return; } catch (_) {}
+        }
+      } catch (_) {}
+      if (Date.now() - start > READY_TIMEOUT_MS) {
+        console.warn(LOG_PREFIX, "No llegó el evento 'ready' a tiempo.");
+        return;
+      }
+      setTimeout(tryHook, 200);
+    }
+    tryHook();
+  }
+
+  // 3) Registra handlers para recordar abierto/cerrado
+  function persistOpenStateHandlers() {
+    try {
+      const wasOpen = localStorage.getItem(OPEN_KEY) === "1";
+      if (wasOpen) { try { window.chatbase("open"); }  catch(_){}; }
+      else         { try { window.chatbase("close"); } catch(_){}; }
+
+      // Guardar cuando el usuario abre/cierra
+      window.chatbase("on", "opened", () => {
+        try { localStorage.setItem(OPEN_KEY, "1"); } catch(_){}
+      });
+      window.chatbase("on", "closed", () => {
+        try { localStorage.setItem(OPEN_KEY, "0"); } catch(_){}
+      });
+
+      console.log(LOG_PREFIX, "Persistencia activada. wasOpen =", wasOpen);
+    } catch (e) {
+      console.warn(LOG_PREFIX, e);
+    }
+  }
+
+  // 4) ¡Invocar!
+  whenChatbaseReady(persistOpenStateHandlers);
+})();
+</script>
+  
   <!-- 2) Flowspark + Chatbase Enhancer (no toques esto) -->
 <script>
 (function () {
@@ -177,4 +240,5 @@
 </script>
 </body>
 </html>
+
 
