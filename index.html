@@ -4,70 +4,93 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flowspark – Automate Conversations. Ignite Growth.</title>
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
   <style>
     :root { --orange:#FF6B00; --blue:#007BFF; --dark:#1E1E1E; --light:#FFFFFF; }
-    body { font-family:'Inter',sans-serif; margin:0; background:var(--light); color:var(--dark); scroll-behavior:smooth; }
+    * { box-sizing: border-box; }
+    body { font-family:'Inter',sans-serif; margin:0; background:var(--light); color:var(--dark); line-height:1.5; }
+
     header { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 2rem; background:rgba(255,255,255,.95); box-shadow:0 2px 8px rgba(0,0,0,.05); position:sticky; top:0; z-index:1000; }
-    header h1 { color:var(--orange); font-size:1.5rem; font-weight:700; }
-    nav a { margin:0 1rem; text-decoration:none; color:var(--dark); font-weight:500; }
-    .btn { background:var(--orange); color:#fff; padding:.7rem 1.3rem; border-radius:8px; font-weight:600; text-decoration:none; }
-    .hero { text-align:center; padding:5rem 2rem; background:linear-gradient(135deg, rgba(0,123,255,.1), rgba(255,107,0,.1)); }
-    .hero h2 { font-size:2.5rem; }
-    .hero p { font-size:1.2rem; color:#555; max-width:600px; margin:1rem auto; }
+    header h1 { color:var(--orange); font-size:1.5rem; font-weight:700; margin:0; }
+    nav a { margin:0 1rem; text-decoration:none; color:var(--dark); font-weight:600; }
+    .btn { background:var(--orange); color:#fff; padding:.7rem 1.1rem; border-radius:8px; font-weight:700; text-decoration:none; display:inline-block; }
+
+    .hero { text-align:center; padding:5rem 2rem; background:linear-gradient(135deg, rgba(0,123,255,.08), rgba(255,107,0,.08)); }
+    .hero h2 { font-size:2.6rem; margin:.2rem 0 .8rem; }
+    .hero p  { font-size:1.15rem; color:#555; max-width:720px; margin:0 auto 1.6rem; }
+
     .section { padding:4rem 2rem; text-align:center; }
     .section h3 { font-size:2rem; color:var(--orange); margin-bottom:2rem; }
-    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:2rem; max-width:1100px; margin:0 auto; }
-    .card { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.06); padding:2rem; text-align:left; }
-    .card h4 { color:var(--blue); }
-    footer { background:var(--dark); color:#fff; padding:2rem; text-align:center; }
+
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.6rem; max-width:1100px; margin:0 auto; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,.06); padding:1.6rem; text-align:left; }
+    .card h4 { color:var(--blue); margin:.2rem 0 .6rem; }
+    .card p { margin:0; color:#444; }
+
+    footer { background:var(--dark); color:#fff; padding:2rem; text-align:center; margin-top:2rem; }
     footer a { color:var(--orange); text-decoration:none; }
-    @media (max-width:600px){ .hero h2{ font-size:2rem; } }
+
+    @media (max-width:600px){
+      .hero h2{ font-size:2.2rem; }
+      nav a { margin:0 .6rem; }
+    }
   </style>
 </head>
+
 <body>
+  <!-- Header -->
   <header>
     <h1>Flowspark</h1>
     <nav>
-      <a href="#services">Services</a>
-      <a href="#demos">Demos</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#contact" class="btn">Get a Demo</a>
+      <a href="#services" id="nav-services">Services</a>
+      <a href="#demos" id="nav-demos">Demos</a>
+      <a href="#pricing" id="nav-pricing">Pricing</a>
+      <a href="#contact" class="btn" id="nav-cta">Get a Demo</a>
     </nav>
   </header>
 
-  <section class="hero">
-    <h2>Automate Conversations. Ignite Growth.</h2>
-    <p>Empower your business with AI-driven chatbots that sell, support, and scale — 24/7.</p>
-    <a href="#contact" class="btn">⚡ Get a Free Demo</a>
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <h2 id="hero-title">Automate Conversations. Ignite Growth.</h2>
+    <p id="hero-sub">
+      Empower your business with AI-driven chatbots that sell, support, and scale — 24/7.
+    </p>
+    <a href="#contact" class="btn" id="hero-btn">⚡ Get a Free Demo</a>
   </section>
 
+  <!-- Services -->
   <section class="section" id="services">
-    <h3>Our Services</h3>
+    <h3 id="services-title">Our Services</h3>
     <div class="cards">
       <div class="card">
         <h4>🤖 Web Chatbot</h4>
-        <p>Lead-generating bot embedded on your website.</p>
+        <p id="svc1">Lead-generating bot embedded on your website.</p>
       </div>
       <div class="card">
         <h4>💬 WhatsApp Automation</h4>
-        <p>Automated flows for client engagement via WhatsApp.</p>
+        <p id="svc2">Automated flows for client engagement via WhatsApp.</p>
       </div>
       <div class="card">
         <h4>🔗 CRM Integration</h4>
-        <p>Sync chat leads with HubSpot, Pipedrive or Google Sheets.</p>
+        <p id="svc3">Sync chat leads with HubSpot, Pipedrive or Google Sheets.</p>
       </div>
     </div>
   </section>
 
+  <!-- Demos -->
   <section class="section" id="demos">
-    <h3>Interactive Demos</h3>
-    <p>See our services in action before you buy.</p>
+    <h3 id="demos-title">Interactive Demos</h3>
+    <p id="demo-sub">See our services in action before you buy.</p>
     <p>👉 Coming soon with real-time previews.</p>
   </section>
 
+  <!-- Pricing -->
   <section class="section" id="pricing">
-    <h3>Plans & Pricing</h3>
+    <h3 id="pricing-title">Plans & Pricing</h3>
     <div class="cards">
       <div class="card">
         <h4>💎 Starter</h4>
@@ -84,73 +107,57 @@
     </div>
   </section>
 
+  <!-- Contact -->
   <section class="section" id="contact">
-    <h3>Let’s Automate Your Business</h3>
+    <h3 id="contact-title">Let’s Automate Your Business</h3>
     <p>📧 <a href="mailto:hello@flowspark.ai">hello@flowspark.ai</a></p>
   </section>
 
+  <!-- Footer -->
   <footer>
     <p>© 2025 Flowspark. All rights reserved.</p>
   </footer>
 
+  <!-- ============================================================
+       Chatbase Widget (OFICIAL) — Server-side Action en Chatbase
+       ============================================================ -->
   <script>
-(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
-</script>
+    (function () {
+      // Reemplaza con tu Bot ID de Chatbase
+      const BOT_ID = "QPdQhcFv6iJ_-FDsTmsXh";
+      const SCRIPT_SRC = "https://www.chatbase.co/embed.min.js";
 
-  <!-- === ⚙️ BLOQUE 2: Integración Flowspark + Make (client-side) === -->
-  <script>
-  (function(){
-    const MAKE_WEBHOOK = "https://hook.us2.make.com/m9iakcd9s1f4ay8h5pyucqp7259lun5m";
-
-    async function sendToMake(payload){
-      try{
-        const res = await fetch(MAKE_WEBHOOK,{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify(payload),
-          keepalive:true
+      // Bootstrap mínimo del widget
+      if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+        window.chatbase = (...args) => { (window.chatbase.q ||= []).push(args); };
+        window.chatbase = new Proxy(window.chatbase, {
+          get(target, prop) { if (prop === "q") return target.q; return (...a)=>target(prop, ...a); }
         });
-        console.log("[Flowspark] Lead enviado a Make ✅", res.status);
-        return res.ok;
-      }catch(e){
-        console.error("[Flowspark] Error enviando lead ❌", e);
-        return false;
-      }
-    }
-
-    window.addEventListener("message", async (event)=>{
-      const data = event.data || {};
-
-      // Escucha acción Client-side del bot
-      if(data.type==="client-action" && data.name==="Enviar Lead A Make"){
-        const inputs=data.inputs||{};
-        const payload={
-          name:inputs.name||"",
-          email:inputs.email||"",
-          message:inputs.message||"",
-          date:new Date().toISOString(),
-          source:"Chatbase Client-side"
-        };
-        console.log("[Flowspark] Acción client-side detectada:", payload);
-        await sendToMake(payload);
-
-        // Responde al bot para continuar
-        window.chatbase("sendClientActionResponse", data.id, {
-          ok:true,
-          message:"Lead enviado correctamente ✅"
-        });
-        return;
       }
 
-      // Compatibilidad con versiones antiguas
-      if(data.type==="CHATBASE_LEAD"){
-        await sendToMake(data.payload);
+      // Cargar script del widget
+      function injectWidget() {
+        if (document.getElementById(BOT_ID)) return;
+        const s = document.createElement("script");
+        s.src = SCRIPT_SRC;
+        s.id = BOT_ID;
+        s.async = true;
+        s.dataset.cbot = BOT_ID;   // ¡Esto es clave!
+        document.body.appendChild(s);
       }
-    });
-  })();
+
+      if (document.readyState === "complete") injectWidget();
+      else window.addEventListener("load", injectWidget);
+
+      // Helper opcional para evitar errores si alguien llama FlowsparkLead.test()
+      // (NO envía a Make; tu acción Server-side ya se encarga)
+      window.FlowsparkLead = {
+        test() {
+          console.log("[Flowspark] Helper activo. La acción server-side en Chatbase es la que envía el lead a Make.");
+          return true;
+        }
+      };
+    })();
   </script>
 </body>
 </html>
-
-
-
