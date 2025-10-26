@@ -4,45 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flowspark – Automate Conversations. Ignite Growth.</title>
-
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
   <style>
     :root { --orange:#FF6B00; --blue:#007BFF; --dark:#1E1E1E; --light:#FFFFFF; }
-    * { box-sizing: border-box; }
-    body { font-family:'Inter',sans-serif; margin:0; background:var(--light); color:var(--dark); line-height:1.5; }
-
+    body { font-family:'Inter',sans-serif; margin:0; background:var(--light); color:var(--dark); scroll-behavior:smooth; }
     header { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 2rem; background:rgba(255,255,255,.95); box-shadow:0 2px 8px rgba(0,0,0,.05); position:sticky; top:0; z-index:1000; }
-    header h1 { color:var(--orange); font-size:1.5rem; font-weight:700; margin:0; }
-    nav a { margin:0 1rem; text-decoration:none; color:var(--dark); font-weight:600; }
-    .btn { background:var(--orange); color:#fff; padding:.7rem 1.1rem; border-radius:8px; font-weight:700; text-decoration:none; display:inline-block; }
-
-    .hero { text-align:center; padding:5rem 2rem; background:linear-gradient(135deg, rgba(0,123,255,.08), rgba(255,107,0,.08)); }
-    .hero h2 { font-size:2.6rem; margin:.2rem 0 .8rem; }
-    .hero p  { font-size:1.15rem; color:#555; max-width:720px; margin:0 auto 1.6rem; }
-
+    header h1 { color:var(--orange); font-size:1.5rem; font-weight:700; }
+    nav a { margin:0 1rem; text-decoration:none; color:var(--dark); font-weight:500; }
+    .btn { background:var(--orange); color:#fff; padding:.7rem 1.3rem; border-radius:8px; font-weight:600; text-decoration:none; }
+    .hero { text-align:center; padding:5rem 2rem; background:linear-gradient(135deg, rgba(0,123,255,.1), rgba(255,107,0,.1)); }
+    .hero h2 { font-size:2.5rem; }
+    .hero p { font-size:1.2rem; color:#555; max-width:600px; margin:1rem auto; }
     .section { padding:4rem 2rem; text-align:center; }
     .section h3 { font-size:2rem; color:var(--orange); margin-bottom:2rem; }
-
-    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.6rem; max-width:1100px; margin:0 auto; }
-    .card { background:#fff; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,.06); padding:1.6rem; text-align:left; }
-    .card h4 { color:var(--blue); margin:.2rem 0 .6rem; }
-    .card p { margin:0; color:#444; }
-
-    footer { background:var(--dark); color:#fff; padding:2rem; text-align:center; margin-top:2rem; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:2rem; max-width:1100px; margin:0 auto; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.06); padding:2rem; text-align:left; }
+    .card h4 { color:var(--blue); }
+    footer { background:var(--dark); color:#fff; padding:2rem; text-align:center; }
     footer a { color:var(--orange); text-decoration:none; }
-
-    @media (max-width:600px){
-      .hero h2{ font-size:2.2rem; }
-      nav a { margin:0 .6rem; }
-    }
+    @media (max-width:600px){ .hero h2{ font-size:2rem; } }
   </style>
 </head>
-
 <body>
-  <!-- Header -->
   <header>
     <h1>Flowspark</h1>
     <nav>
@@ -53,16 +36,12 @@
     </nav>
   </header>
 
-  <!-- Hero -->
-  <section class="hero" id="home">
+  <section class="hero">
     <h2 id="hero-title">Automate Conversations. Ignite Growth.</h2>
-    <p id="hero-sub">
-      Empower your business with AI-driven chatbots that sell, support, and scale — 24/7.
-    </p>
+    <p id="hero-sub">Empower your business with AI-driven chatbots that sell, support, and scale — 24/7.</p>
     <a href="#contact" class="btn" id="hero-btn">⚡ Get a Free Demo</a>
   </section>
 
-  <!-- Services -->
   <section class="section" id="services">
     <h3 id="services-title">Our Services</h3>
     <div class="cards">
@@ -81,14 +60,12 @@
     </div>
   </section>
 
-  <!-- Demos -->
   <section class="section" id="demos">
     <h3 id="demos-title">Interactive Demos</h3>
     <p id="demo-sub">See our services in action before you buy.</p>
     <p>👉 Coming soon with real-time previews.</p>
   </section>
 
-  <!-- Pricing -->
   <section class="section" id="pricing">
     <h3 id="pricing-title">Plans & Pricing</h3>
     <div class="cards">
@@ -107,57 +84,139 @@
     </div>
   </section>
 
-  <!-- Contact -->
   <section class="section" id="contact">
     <h3 id="contact-title">Let’s Automate Your Business</h3>
     <p>📧 <a href="mailto:hello@flowspark.ai">hello@flowspark.ai</a></p>
   </section>
 
-  <!-- Footer -->
   <footer>
     <p>© 2025 Flowspark. All rights reserved.</p>
   </footer>
 
-  <!-- ============================================================
-       Chatbase Widget (OFICIAL) — Server-side Action en Chatbase
-       ============================================================ -->
+  <!-- === Flowspark: Chatbase embed endurecido + lead → Make === -->
   <script>
-    (function () {
-      // Reemplaza con tu Bot ID de Chatbase
-      const BOT_ID = "QPdQhcFv6iJ_-FDsTmsXh";
-      const SCRIPT_SRC = "https://www.chatbase.co/embed.min.js";
+  (function () {
+    // === CONFIG ===
+    var BOT_ID       = "QPdQhcFv6iJ_-FDsTmsXh";                   // Tu ID de Chatbase (mismo que usabas)
+    var SCRIPT_SRC   = "https://www.chatbase.co/embed.min.js";
+    var OPEN_KEY     = "fs_cb_open";                               // recuerda si el bubble quedó abierto
+    var LOADED_FLAG  = "__flowspark_cb_loaded";                   // guard para evitar doble carga
+    var MAKE_WEBHOOK = "https://hook.us2.make.com/m9iakcd9s1f4ay8h5pyucqp7259lun5m"; // tu webhook Make
 
-      // Bootstrap mínimo del widget
-      if (!window.chatbase || window.chatbase("getState") !== "initialized") {
-        window.chatbase = (...args) => { (window.chatbase.q ||= []).push(args); };
-        window.chatbase = new Proxy(window.chatbase, {
-          get(target, prop) { if (prop === "q") return target.q; return (...a)=>target(prop, ...a); }
-        });
+    // === Utils opcionales: UTM + dedupe ===
+    function getUTMs(url) {
+      try {
+        var u = new URL(url || window.location.href);
+        var keys = ["utm_source","utm_medium","utm_campaign","utm_term","utm_content"];
+        var out = {}; keys.forEach(k => out[k] = u.searchParams.get(k) || ""); return out;
+      } catch(e){ return {}; }
+    }
+    function sanitize(v){ return String(v == null ? "" : v).trim().slice(0, 2000); }
+    function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||"").trim()); }
+    function dedupe(email, message){
+      try{
+        var key = "fs_lead_"+(email||"").toLowerCase()+"_"+(message||"").slice(0,40);
+        var raw = localStorage.getItem(key); var now = Date.now(); var ttl = 2*60*60*1000;
+        if(raw){ var t=JSON.parse(raw).t; if(now - t < ttl) return true; }
+        localStorage.setItem(key, JSON.stringify({t:now}));
+      }catch(e){}
+      return false;
+    }
+
+    async function sendLead(payload){
+      // reintentos básicos
+      for (let i=0;i<3;i++){
+        try{
+          var res = await fetch(MAKE_WEBHOOK, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(payload),
+            keepalive:true
+          });
+          if(res.ok) return true;
+        }catch(e){}
+        await new Promise(r=>setTimeout(r, 600*(i+1)));
       }
+      return false;
+    }
 
-      // Cargar script del widget
-      function injectWidget() {
-        if (document.getElementById(BOT_ID)) return;
-        const s = document.createElement("script");
-        s.src = SCRIPT_SRC;
-        s.id = BOT_ID;
-        s.async = true;
-        s.dataset.cbot = BOT_ID;   // ¡Esto es clave!
-        document.body.appendChild(s);
-      }
-
-      if (document.readyState === "complete") injectWidget();
-      else window.addEventListener("load", injectWidget);
-
-      // Helper opcional para evitar errores si alguien llama FlowsparkLead.test()
-      // (NO envía a Make; tu acción Server-side ya se encarga)
-      window.FlowsparkLead = {
-        test() {
-          console.log("[Flowspark] Helper activo. La acción server-side en Chatbase es la que envía el lead a Make.");
-          return true;
-        }
+    async function captureLead({name, email, message, extra}) {
+      var n = sanitize(name), e = sanitize(email), m = sanitize(message);
+      if(!isEmail(e)) return false;
+      if(dedupe(e,m)) return false;
+      var utm = getUTMs();
+      var payload = {
+        name:n, email:e, message:m || "Lead desde chatbot Chatbase",
+        source:"Chatbase - Web",
+        page_url: window.location.href,
+        referrer: document.referrer || "",
+        date: new Date().toISOString(),
+        ...utm, ...(extra||{})
       };
-    })();
+      var ok = await sendLead(payload);
+      if(ok) console.log("[Flowspark] Lead enviado a Make ✅", payload);
+      else   console.error("[Flowspark] No fue posible enviar el lead ❌", payload);
+      return ok;
+    }
+
+    // === Evitar doble carga del script ===
+    if (window[LOADED_FLAG]) return;
+    window[LOADED_FLAG] = true;
+
+    // Stub de chatbase antes de cargar el script real
+    if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+      window.chatbase = (...args) => {
+        (window.chatbase.q || (window.chatbase.q = [])).push(args);
+      };
+      window.chatbase = new Proxy(window.chatbase, {
+        get(target, prop){ if(prop==="q") return target.q; return (...a)=>target(prop, ...a); }
+      });
+    }
+
+    // Persistir estado abierto/cerrado
+    try{
+      var wasOpen = localStorage.getItem(OPEN_KEY) === "1";
+      window.chatbase("on","ready",function(){
+        if (wasOpen) window.chatbase("open"); else window.chatbase("close");
+        window.chatbase("on","opened",()=>localStorage.setItem(OPEN_KEY,"1"));
+        window.chatbase("on","closed",()=>localStorage.setItem(OPEN_KEY,"0"));
+      });
+    }catch(e){}
+
+    // Inyectar el script sólo una vez
+    function inject(){
+      if (document.getElementById(BOT_ID)) return;
+      var s = document.createElement("script");
+      s.src = SCRIPT_SRC; s.id = BOT_ID; s.async = true; s.dataset.cbot = BOT_ID;
+      document.body.appendChild(s);
+    }
+    if (document.readyState === "complete") inject();
+    else window.addEventListener("load", inject);
+
+    // Listener de leads desde Chatbase (acciones personalizadas que hagan postMessage)
+    window.addEventListener("message", function (event) {
+      try {
+        var data = event.data || {};
+        if (data.type !== "CHATBASE_LEAD" && data.type !== "lead_captured") return;
+        var p = data.payload || {};
+        var name = p.name || p.full_name || "";
+        var email = p.email || p.mail || "";
+        var message = p.message || p.intent || p.reason || "";
+        captureLead({ name, email, message, extra:{ raw:p } });
+      } catch (err) {
+        console.error("[Flowspark] Error procesando postMessage:", err);
+      }
+    });
+
+    // Helper global para test manual desde consola:
+    window.FlowsparkLead = {
+      test(){ return captureLead({
+        name:"Prueba Chatbase", email:"demo@flowspark.ai",
+        message:"Test manual desde window.FlowsparkLead.test()", extra:{test:true}
+      });}
+    };
+  })();
   </script>
+  <!-- === /Flowspark Chatbase + lead === -->
 </body>
 </html>
