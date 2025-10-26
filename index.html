@@ -97,36 +97,35 @@
 <script>
 (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
 </script>
-   <!-- 2) Flowspark + Chatbase Enhancer (no toques esto) -->
+
+  <!--  2. Bloque de persistencia (mantiene el chat abierto/cerrado) -->
 <script>
 (function () {
-  // ====== CONFIGS ======
-  const OPEN_KEY     = "fs_cb_open";           // recuerda si el bubble estaba abierto (1) o cerrado (0)
-  const LOADED_FLAG  = "__fs_cb_enhancer_loaded"; // guard para no instalar listeners dos veces
-  const READY_TIMEOUT_MS = 12000;              // timeout razonable para esperar al "ready"
-  const LOG_PREFIX   = "[Flowspark×Chatbase]";
+  const LOG_PREFIX = "[Chatbase Persist]";
+  const OPEN_KEY   = "fs_cb_open";       // Guarda el estado en localStorage
+  const READY_TIMEOUT_MS = 8000;         // Tiempo máximo de espera para "ready"
 
-  if (window[LOADED_FLAG]) return; // evita doble instalación
-  window[LOADED_FLAG] = true;
+  // Stub defensivo si Chatbase aún no inicializa
+  if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+    const q = [];
+    const stub = (...args) => q.push(args);
+    stub.q = q;
+    window.chatbase = new Proxy(stub, {
+      get(target, prop) { return prop === "q" ? target.q : (...a) => target(prop, ...a); }
+    });
+  }
 
-  // Espera a que Chatbase esté listo (tiene que estar YA pegado el widget oficial arriba)
+  // Esperar a que el widget esté listo
   function whenChatbaseReady(cb) {
     const start = Date.now();
     function tryHook() {
       try {
         if (typeof window.chatbase === "function") {
-          // Si ya expone "on", nos suscribimos al ready; si no, reintenta
-          if (typeof window.chatbase === "function") {
-            // Algunas versiones exponen "on" incluso antes de initialized
-            try {
-              window.chatbase("on","ready", cb);
-              return;
-            } catch (_) {}
-          }
+          try { window.chatbase("on", "ready", cb); return; } catch (_) {}
         }
       } catch (_) {}
       if (Date.now() - start > READY_TIMEOUT_MS) {
-        console.warn(LOG_PREFIX, "No llegó el evento 'ready' del widget a tiempo.");
+        console.warn(LOG_PREFIX, "No llegó el evento 'ready' a tiempo.");
         return;
       }
       setTimeout(tryHook, 200);
@@ -134,49 +133,36 @@
     tryHook();
   }
 
-  // Persiste estado abierto/cerrado en localStorage
+  // Registrar handlers para recordar abierto/cerrado
   function persistOpenStateHandlers() {
     try {
       const wasOpen = localStorage.getItem(OPEN_KEY) === "1";
+      if (wasOpen) { try { window.chatbase("open"); }  catch(_){}; }
+      else         { try { window.chatbase("close"); } catch(_){}; }
 
-      // Reabre/cierra según lo último que recordamos
-      if (wasOpen) {
-        try { window.chatbase("open"); } catch(_) {}
-      } else {
-        try { window.chatbase("close"); } catch(_) {}
-      }
-
-      // Actualiza storage al abrir/cerrar
-      window.chatbase("on","opened", () => {
-        try { localStorage.setItem(OPEN_KEY,"1"); } catch(_){}
+      // Guardar cambios cuando el usuario abre/cierra
+      window.chatbase("on", "opened", () => {
+        try { localStorage.setItem(OPEN_KEY, "1"); } catch(_){}
       });
-      window.chatbase("on","closed", () => {
-        try { localStorage.setItem(OPEN_KEY,"0"); } catch(_){}
+      window.chatbase("on", "closed", () => {
+        try { localStorage.setItem(OPEN_KEY, "0"); } catch(_){}
       });
 
-      console.log(LOG_PREFIX, "Persistencia open/closed habilitada. (wasOpen =", wasOpen, ")");
-    } catch (err) {
-      console.warn(LOG_PREFIX, "No se pudo persistir open/close:", err);
+      console.log(LOG_PREFIX, "Persistencia activada. wasOpen =", wasOpen);
+    } catch (e) {
+      console.warn(LOG_PREFIX, e);
     }
   }
 
-  // Helper de pruebas (no toca Make; tu acción server-side ya envía el lead).
-  window.FlowsparkLead = {
-    test() {
-      console.log(LOG_PREFIX, "Helper activo. El envío real lo hace tu Server-side Action en Chatbase → Make.");
-      return true;
-    }
-  };
-
-  // Instala todo cuando el widget avisa "ready"
-  whenChatbaseReady(() => {
-    console.log(LOG_PREFIX, "Widget listo (‘ready’). Instalando persistencia…");
-    persistOpenStateHandlers();
-  });
+  // Ejecutar persistencia cuando el widget esté listo
+  whenChatbaseReady(persistOpenStateHandlers);
 })();
 </script>
+
+<!-- ===================================================================== -->
 </body>
 </html>
+
 
 
 
