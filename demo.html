@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solicita tu demo de Flowspark</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 24px; max-width: 720px; margin: auto; }
+    form { display: grid; gap: 12px; }
+    input, select, textarea { padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+    button { background: #111827; color: white; border: 0; padding: 12px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .hint { color: #6b7280; font-size: 12px; }
+    .success { color: #065f46; }
+    .error { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <h1>Solicita tu demo de Flowspark</h1>
+  <p class="hint">Completa el formulario y te enviaremos una demo personalizada para tu negocio.</p>
+
+  <form id="flowsparkForm">
+    <input name="name" type="text" placeholder="Nombre" required />
+    <input name="email" type="email" placeholder="Email" required />
+    <input name="phone" type="tel" placeholder="Teléfono (opcional)" />
+    <input name="company" type="text" placeholder="Empresa (opcional)" />
+    <input name="website" type="url" placeholder="Website (opcional)" />
+    <select name="sector" required>
+      <option value="">Selecciona tu sector</option>
+      <option value="Agencia">Agencia de marketing</option>
+      <option value="SaaS">SaaS</option>
+      <option value="E-commerce">E-commerce</option>
+    </select>
+    <textarea name="pain_points" placeholder="¿Qué quieres automatizar primero?"></textarea>
+    <textarea name="message" placeholder="Mensaje adicional (opcional)"></textarea>
+    <label><input type="checkbox" name="consent" required /> Acepto recibir comunicaciones.</label>
+    <!-- UTMs (se rellenan solas si vienen en la URL) -->
+    <input type="hidden" name="utm_source" />
+    <input type="hidden" name="utm_campaign" />
+    <input type="hidden" name="source_channel" value="webform" />
+
+    <button type="submit">Obtener demo</button>
+  </form>
+
+  <p id="status" class="hint"></p>
+
+  <script>
+    // Leer UTMs desde la URL
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      document.querySelector('[name="utm_source"]').value = params.get("utm_source") || "";
+      document.querySelector('[name="utm_campaign"]').value = params.get("utm_campaign") || "";
+    })();
+
+    const form = document.getElementById("flowsparkForm");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "Enviando...";
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const res = await fetch("/api/lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          status.textContent = "✅ ¡Formulario enviado! Redirigiendo…";
+          setTimeout(() => (window.location.href = "/gracias"), 1000);
+        } else {
+          const { error } = await res.json();
+          status.textContent = "⚠️ " + (error || "No se pudo enviar.");
+          status.className = "error";
+        }
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Error de conexión.";
+        status.className = "error";
+      }
+    });
+  </script>
+</body>
+</html>
