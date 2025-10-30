@@ -69,7 +69,7 @@
 
         if (res.ok) {
           status.textContent = "✅ ¡Formulario enviado! Redirigiendo…";
-          setTimeout(() => (window.location.href = "/gracias"), 1000);
+          setTimeout(() => (window.location.href = "/gracias.html"), 1000);
         } else {
           const { error } = await res.json();
           status.textContent = "⚠️ " + (error || "No se pudo enviar.");
