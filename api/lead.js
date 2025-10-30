@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
-    const webhookUrl = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
+    const webhookUrl = "https://hook.us2.make.com/uohzy32vttgyvqg0yhwf8i9cy9ecianx";
     if (!webhookUrl) {
       return res.status(500).json({ error: "Webhook no configurado en Vercel" });
     }
