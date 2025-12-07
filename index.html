@@ -25,6 +25,7 @@
     @media (max-width:600px){ .hero h2{ font-size:2rem; } }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Flowspark</h1>
@@ -93,78 +94,80 @@
     <p>© 2025 Flowspark. All rights reserved.</p>
   </footer>
 
-  <!-- 1) Pega aquí el SNIPPET OFICIAL del widget de Chatbase (tal cual lo copia Chatbase) -->
-<script>
-(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
-</script>
+  <!-- ========================================================= -->
+  <!--   🔥 CHATBASE DESACTIVADO (NO SE ELIMINA, SOLO COMENTADO)  -->
+  <!-- ========================================================= -->
+  <!--
+  <script>
+    (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){
+      window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}
+      window.chatbase.q.push(arguments)};
+      window.chatbase=new Proxy(window.chatbase,{get(target,prop){
+      if(prop==="q"){return target.q}
+      return(...args)=>target(prop,...args)}})}
+      const onLoad=function(){const script=document.createElement("script");
+      script.src="https://www.chatbase.co/embed.min.js";
+      script.id="QPdQhcFv6iJ_-FDsTmsXh";script.domain="www.chatbase.co";
+      document.body.appendChild(script)};
+      if(document.readyState==="complete"){onLoad()}
+      else{window.addEventListener("load",onLoad)}}
+    )();
+  </script>
 
-  <!--  2. Bloque de persistencia (mantiene el chat abierto/cerrado) -->
-<script>
-(function () {
-  const LOG_PREFIX = "[Chatbase Persist]";
-  const OPEN_KEY   = "fs_cb_open";       // Guarda el estado en localStorage
-  const READY_TIMEOUT_MS = 8000;         // Tiempo máximo de espera para "ready"
-
-  // Stub defensivo si Chatbase aún no inicializa
-  if (!window.chatbase || window.chatbase("getState") !== "initialized") {
-    const q = [];
-    const stub = (...args) => q.push(args);
-    stub.q = q;
-    window.chatbase = new Proxy(stub, {
-      get(target, prop) { return prop === "q" ? target.q : (...a) => target(prop, ...a); }
-    });
-  }
-
-  // Esperar a que el widget esté listo
-  function whenChatbaseReady(cb) {
-    const start = Date.now();
-    function tryHook() {
-      try {
-        if (typeof window.chatbase === "function") {
-          try { window.chatbase("on", "ready", cb); return; } catch (_) {}
-        }
-      } catch (_) {}
-      if (Date.now() - start > READY_TIMEOUT_MS) {
-        console.warn(LOG_PREFIX, "No llegó el evento 'ready' a tiempo.");
-        return;
+  <script>
+    (function () {
+      const LOG_PREFIX = "[Chatbase Persist]";
+      const OPEN_KEY   = "fs_cb_open";
+      const READY_TIMEOUT_MS = 8000;
+      if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+        const q = [];
+        const stub = (...args) => q.push(args);
+        stub.q = q;
+        window.chatbase = new Proxy(stub, {
+          get(t, prop) { return prop === "q" ? t.q : (...a) => t(prop, ...a); }
+        });
       }
-      setTimeout(tryHook, 200);
-    }
-    tryHook();
-  }
+      function whenChatbaseReady(cb) {
+        const start = Date.now();
+        function tryHook() {
+          try {
+            if (typeof window.chatbase === "function") {
+              try { window.chatbase("on","ready",cb); return; } catch(_) {}
+            }
+          } catch (_) {}
+          if (Date.now()-start > READY_TIMEOUT_MS) return;
+          setTimeout(tryHook,200);
+        }
+        tryHook();
+      }
+      function persistOpenStateHandlers() {
+        try {
+          const wasOpen = localStorage.getItem(OPEN_KEY)==="1";
+          if (wasOpen) window.chatbase("open");
+          else window.chatbase("close");
+          window.chatbase("on","opened",()=>localStorage.setItem(OPEN_KEY,"1"));
+          window.chatbase("on","closed",()=>localStorage.setItem(OPEN_KEY,"0"));
+        } catch(e){}
+      }
+      whenChatbaseReady(persistOpenStateHandlers);
+    })();
+  </script>
+  -->
 
-  // Registrar handlers para recordar abierto/cerrado
-  function persistOpenStateHandlers() {
-    try {
-      const wasOpen = localStorage.getItem(OPEN_KEY) === "1";
-      if (wasOpen) { try { window.chatbase("open"); }  catch(_){}; }
-      else         { try { window.chatbase("close"); } catch(_){}; }
+  <!-- ========================================================= -->
+  <!--   ⭐ NUEVO CHATBOT: TYPEBOT BUBBLE (ACTIVO)               -->
+  <!-- ========================================================= -->
+  <script type="module">
+    import Typebot from "https://cdn.jsdelivr.net/npm/@typebot.io/js@0/dist/web.js";
 
-      // Guardar cambios cuando el usuario abre/cierra
-      window.chatbase("on", "opened", () => {
-        try { localStorage.setItem(OPEN_KEY, "1"); } catch(_){}
-      });
-      window.chatbase("on", "closed", () => {
-        try { localStorage.setItem(OPEN_KEY, "0"); } catch(_){}
-      });
+    Typebot.initBubble({
+      typebot: "flow-lin-q-demo-lead-a30pkgm",
+      theme: {
+        button: { backgroundColor: "#4f46e5" },
+        chatWindow: { backgroundColor: "#171923" }
+      }
+    });
+  </script>
 
-      console.log(LOG_PREFIX, "Persistencia activada. wasOpen =", wasOpen);
-    } catch (e) {
-      console.warn(LOG_PREFIX, e);
-    }
-  }
-
-  // Ejecutar persistencia cuando el widget esté listo
-  whenChatbaseReady(persistOpenStateHandlers);
-})();
-</script>
-
-<!-- ===================================================================== -->
 </body>
 </html>
-
-
-
-
-
-
